@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\..\Digitony_RCA.uproject" />
+    <Filter Include="Source">
+      <UniqueIdentifier>{F31BBDD1-B3E8-3BCC-9652-680E16935819}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\Digitony_RCA.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\Source\Digitony_RCAEditor.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\.vsconfig" />
+    <Filter Include="Config">
+      <UniqueIdentifier>{FA535FFB-25E1-3D20-B416-52F9BE21E06E}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\DefaultEditor.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEngine.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultGame.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultInput.ini">
+      <Filter>Config</Filter>
+    </None>
+    <Filter Include="Config\Mac">
+      <UniqueIdentifier>{C34A53DE-7A2E-391F-9292-A84444E41B18}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\Mac\MacEngine.ini">
+      <Filter>Config\Mac</Filter>
+    </None>
+    <Filter Include="Source\Digitony_RCA">
+      <UniqueIdentifier>{42A118E0-5640-3B23-8A74-4AD5461ED128}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\Digitony_RCA\Digitony_RCA.Build.cs">
+      <Filter>Source\Digitony_RCA</Filter>
+    </None>
+    <ClCompile Include="..\..\Source\Digitony_RCA\Digitony_RCA.cpp">
+      <Filter>Source\Digitony_RCA</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\Digitony_RCA\Digitony_RCA.h">
+      <Filter>Source\Digitony_RCA</Filter>
+    </ClInclude>
+    <Filter Include="Source\Digitony_RCA\CodeBlocks">
+      <UniqueIdentifier>{FA4D79D8-4A51-33C5-B23A-FBEECCC626EE}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\Digitony_RCA\CodeBlocks\CCodeBlockBase.cpp">
+      <Filter>Source\Digitony_RCA\CodeBlocks</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\Digitony_RCA\CodeBlocks\CCodeBlockBase.h">
+      <Filter>Source\Digitony_RCA\CodeBlocks</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\Digitony_RCA\CodeBlocks\ECodeBlockType.cpp">
+      <Filter>Source\Digitony_RCA\CodeBlocks</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\Digitony_RCA\CodeBlocks\ECodeBlockType.h">
+      <Filter>Source\Digitony_RCA\CodeBlocks</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,17 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-Digitony_RCA.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Users\alice\Documents\GitHub\Digitony_seoyeon\Digitony_RCA\Intermediate\Build\Win64\x64\Digitony_RCAEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.InclOrderOldest.h.obj"
+"C:\Users\alice\Documents\GitHub\Digitony_seoyeon\Digitony_RCA\Intermediate\Build\Win64\x64\UnrealEditor\Development\Digitony_RCA\CCodeBlockBase.gen.cpp.obj"
+"C:\Users\alice\Documents\GitHub\Digitony_seoyeon\Digitony_RCA\Intermediate\Build\Win64\x64\UnrealEditor\Development\Digitony_RCA\Digitony_RCA.init.gen.cpp.obj"
+"C:\Users\alice\Documents\GitHub\Digitony_seoyeon\Digitony_RCA\Intermediate\Build\Win64\x64\UnrealEditor\Development\Digitony_RCA\ECodeBlockType.gen.cpp.obj"
+"C:\Users\alice\Documents\GitHub\Digitony_seoyeon\Digitony_RCA\Intermediate\Build\Win64\x64\UnrealEditor\Development\Digitony_RCA\Digitony_RCA.cpp.obj"
+"C:\Users\alice\Documents\GitHub\Digitony_seoyeon\Digitony_RCA\Intermediate\Build\Win64\x64\UnrealEditor\Development\Digitony_RCA\CCodeBlockBase.cpp.obj"
+"C:\Users\alice\Documents\GitHub\Digitony_seoyeon\Digitony_RCA\Intermediate\Build\Win64\x64\UnrealEditor\Development\Digitony_RCA\ECodeBlockType.cpp.obj"
+"C:\Users\alice\Documents\GitHub\Digitony_seoyeon\Digitony_RCA\Intermediate\Build\Win64\x64\UnrealEditor\Development\Digitony_RCA\Default.rc2.res"
+/OUT:"C:\Users\alice\Documents\GitHub\Digitony_seoyeon\Digitony_RCA\Intermediate\Build\Win64\x64\UnrealEditor\Development\Digitony_RCA\UnrealEditor-Digitony_RCA.lib"
