@@ -1,0 +1,22 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\alice\\documents\\github\\digitony_seoyeon\\digitony_rca\\source\\digitony_rca\\codeblocks\\ccodeblockbase.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\users\\alice\\documents\\github\\digitony_seoyeon\\digitony_rca\\intermediate\\build\\win64\\x64\\digitony_rcaeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.inclorderoldest.h.pch",
+        "Includes": [
+            "c:\\users\\alice\\documents\\github\\digitony_seoyeon\\digitony_rca\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\digitony_rca\\definitions.digitony_rca.h",
+            "c:\\users\\alice\\documents\\github\\digitony_seoyeon\\digitony_rca\\source\\digitony_rca\\codeblocks\\ccodeblockbase.h",
+            "c:\\users\\alice\\documents\\github\\digitony_seoyeon\\digitony_rca\\source\\digitony_rca\\codeblocks\\ecodeblocktype.h",
+            "c:\\users\\alice\\documents\\github\\digitony_seoyeon\\digitony_rca\\intermediate\\build\\win64\\unrealeditor\\inc\\digitony_rca\\uht\\ccodeblockbase.generated.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\source\\runtime\\engine\\classes\\physicsengine\\physicshandlecomponent.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\source\\runtime\\engine\\classes\\physicsengine\\constraintinstance.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\source\\runtime\\engine\\classes\\physicsengine\\constraintdrives.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\constraintdrives.generated.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\constraintinstance.generated.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\physicshandlecomponent.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
