@@ -33,6 +33,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UStaticMesh> EndBlock;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float Spacing;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void LoadMapData();

@@ -1,100 +1,112 @@
 #include "AlogorithmQuestion/CAlgorithmQuestion.h"
+#include "Engine/StaticMeshActor.h"
 
 
 ACAlgorithmQuestion::ACAlgorithmQuestion()
 {
-	PrimaryActorTick.bCanEverTick = true;
-
+    PrimaryActorTick.bCanEverTick = true;
 }
 
 
 void ACAlgorithmQuestion::BeginPlay()
 {
-	Super::BeginPlay();
-
-	
+    Super::BeginPlay();
+    LoadMapData();
 }
 
 
 void ACAlgorithmQuestion::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-
+    Super::Tick(DeltaTime);
 }
 
 void ACAlgorithmQuestion::LoadMapData()
 {
-	
+    if (!MapData.DataTable)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("MapData DataTable이 설정되지 않았습니다."));
+        return;
+    }
+
+    FAlgorithmQuestionMapData* Row = MapData.DataTable->FindRow<FAlgorithmQuestionMapData>(MapData.RowName, TEXT(""));
+
+    if (!Row)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("MapData 행을 찾을 수 없습니다."));
+        return;
+    }
+
+    ID = Row->ID;
+    Width = Row->Width;
+    Height = Row->Height;
+    Depth = Row->Depth;
+    Map = Row->Map;
+
+    CreateMap();
 }
 
 void ACAlgorithmQuestion::CreateMap()
 {
-    int32 MapSize = Width * Height * Depth;
-
-    for (int32 i = 0; i < MapSize; i++)
+    for (int32 Z = 0; Z < Depth; Z++)
     {
-        FVector Position;
-        Position.X = (i % Width) * 100.0f;
-        Position.Y = ((i / Width) % Height) * 100.0f;
-        Position.Z = (i / (Width * Height)) * 100.0f; 
-
-        switch (Map[i])
+        for (int32 Y = 0; Y < Height; Y++)
         {
-        // 0 일경우 빈 공간
-        case 0:
-            UE_LOG(LogTemp, Warning, TEXT("void"));
-            break;
-
-        // 1 일경우 장애물 생성
-        case 1:
-            if (ObstacleBlock)
+            for (int32 X = 0; X < Width; X++)
             {
-                UStaticMeshComponent* NewObstacle = NewObject<UStaticMeshComponent>(this);
-                if (NewObstacle)
+                FVector ActorLocation = this->GetActorLocation();
+                FVector NewLocation = FVector(ActorLocation.X + (X * Spacing), ActorLocation.Y + (Y * Spacing), ActorLocation.Z + (Z * Spacing));
+                FRotator NewRotator = this->GetActorRotation();
+
+                int32 Index = Z * (Width * Height) + Y * Width + X;
+
+                if (!Map.IsValidIndex(Index))
                 {
-                    NewObstacle->SetStaticMesh(ObstacleBlock);
-                    NewObstacle->SetWorldLocation(Position);
-                    NewObstacle->RegisterComponent();
-                    NewObstacle->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
-                    UE_LOG(LogTemp, Warning, TEXT("Obstacle"));
+                    UE_LOG(LogTemp, Warning, TEXT("맵 인덱스가 유효하지 않습니다: %d"), Index);
+                    continue;
+                }
+
+                char MapValue = Map[Index];
+
+                if (MapValue == '0')
+                {
+                    continue;
+                }
+
+                AStaticMeshActor* NewMesh = GetWorld()->SpawnActor<AStaticMeshActor>(NewLocation, NewRotator);
+                if (!NewMesh || !NewMesh->GetStaticMeshComponent())
+                {
+                    UE_LOG(LogTemp, Error, TEXT("새 메쉬 액터 생성에 실패했습니다."));
+                    continue;
+                }
+
+                switch (MapValue)
+                {
+                case '1':
+                    if (ObstacleBlock)
+                    {
+                        NewMesh->GetStaticMeshComponent()->SetStaticMesh(ObstacleBlock);
+                    }
+                    break;
+
+                case '2':
+                    if (StartBlock)
+                    {
+                        NewMesh->GetStaticMeshComponent()->SetStaticMesh(StartBlock);
+                    }
+                    break;
+
+                case '3':
+                    if (EndBlock)
+                    {
+                        NewMesh->GetStaticMeshComponent()->SetStaticMesh(EndBlock);
+                    }
+                    break;
+
+                default:
+                    UE_LOG(LogTemp, Warning, TEXT("유효하지 않은 맵 데이터: %c"), MapValue);
+                    break;
                 }
             }
-            break;
-
-        // 2일 경우 시작지점
-        case 2:
-             if (StartBlock)
-            {
-                UStaticMeshComponent* NewStart = NewObject<UStaticMeshComponent>(this);
-                if (NewStart)
-                {
-                    NewStart->SetStaticMesh(StartBlock);
-                    NewStart->SetWorldLocation(Position);
-                    NewStart->RegisterComponent();
-                    NewStart->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
-                }
-            }
-            break;
-
-        // 3일 경우 도착 지점
-        case 3:
-            if (EndBlock)
-            {
-                UStaticMeshComponent* NewEnd = NewObject<UStaticMeshComponent>(this);
-                if (NewEnd)
-                {
-                    NewEnd->SetStaticMesh(EndBlock);
-                    NewEnd->SetWorldLocation(Position);
-                    NewEnd->RegisterComponent();
-                    NewEnd->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
-                }
-            }
-            break;
-
-        default:
-            UE_LOG(LogTemp, Warning, TEXT("Invalid data format"));
-            break;
         }
     }
 }
-
