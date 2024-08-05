@@ -44,7 +44,6 @@ void ACMagicCircle::AddCodeBlock(ACCodeBlockBase* InCodeBlock)
 	}
 
 	CodeBlocks.Add(InCodeBlock);
-
 	UpdateMagicCircle();
 }
 

@@ -28,6 +28,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly)
 	TArray<TObjectPtr<class ACCodeBlockBase>> CodeBlocks;
 
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void AddCodeBlock(ACCodeBlockBase* InCodeBlock);
