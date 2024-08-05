@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "AlogorithmQuestion/FAlgorithmQuestionMapData.h"
+#include "MagicClicle/CMagicCircle.h"
+#include "CodeBlocks/ECodeBlockType.h"
 #include "CAlgorithmQuestion.generated.h"
 
 
@@ -42,6 +44,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CreateMap();
+
+	UFUNCTION(BlueprintCallable)
+	void StartMagic();
 	
 private:
 	int32 ID;

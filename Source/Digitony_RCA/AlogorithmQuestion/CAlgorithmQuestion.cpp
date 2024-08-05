@@ -110,3 +110,9 @@ void ACAlgorithmQuestion::CreateMap()
         }
     }
 }
+
+
+void ACAlgorithmQuestion::StartMagic()
+{
+
+}
