@@ -3,23 +3,21 @@
 
 ACCodeBlockBase::ACCodeBlockBase()
 {
-	PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = true;
 
-	PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("GrabComponent"));
-	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+    PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("GrabComponent"));
+    StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 
-
+    // Set the root component to the StaticMeshComponent
+    SetRootComponent(StaticMeshComponent);
 }
 
 void ACCodeBlockBase::BeginPlay()
 {
-	Super::BeginPlay();
-	
+    Super::BeginPlay();
 }
 
 void ACCodeBlockBase::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-
+    Super::Tick(DeltaTime);
 }
-

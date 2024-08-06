@@ -1,63 +1,66 @@
-#include "MagicClicle/CMagicCircle.h"
-#include "Components/BoxComponent.h"
+#include "CMagicCircle.h"
 #include "CodeBlocks/CCodeBlockBase.h"
+#include "Components/BoxComponent.h"
 
-
+// Constructor
 ACMagicCircle::ACMagicCircle()
 {
-	PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = true;
 
-	MagicCircleMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MagicCircleMeshComponent"));
-	BoxCollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollisionComponent"));
+    // Create and initialize components
+    MagicCircleMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MagicCircleMeshComponent"));
+    BoxCollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollisionComponent"));
 
-	SetRootComponent(MagicCircleMeshComponent);
-	BoxCollisionComponent->SetupAttachment(GetRootComponent());
+    // Set up component hierarchy
+    SetRootComponent(MagicCircleMeshComponent);
+    BoxCollisionComponent->SetupAttachment(GetRootComponent());
 }
 
 // Called when the game starts or when spawned
 void ACMagicCircle::BeginPlay()
 {
-	Super::BeginPlay();
-	
+    Super::BeginPlay();
 }
 
 // Called every frame
 void ACMagicCircle::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-
+    Super::Tick(DeltaTime);
 }
 
+// Adds a code block to the magic circle
 void ACMagicCircle::AddCodeBlock(ACCodeBlockBase* InCodeBlock)
 {
-	if (InCodeBlock == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("InCodeBlock is null"));
-		return;
-	}
+    if (InCodeBlock == nullptr)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("InCodeBlock is null"));
+        return;
+    }
 
-	// 코드 블록이 16개 이상 입력되지 못하게 예외 처리
-	if (CodeBlocks.Num() >= CodeBlockArrayNum)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CodeBlock is full"));
-		return;
-	}
+    if (CodeBlocks.Num() >= CodeBlockArrayNum)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("CodeBlock is full"));
+        return;
+    }
 
-	CodeBlocks.Add(InCodeBlock);
-	UpdateMagicCircle();
+    // Create and populate FCodeBlockInfo struct
+    FCodeBlockInfo NewBlockInfo;
+    NewBlockInfo.CodeBlockType = InCodeBlock->GetCodeBlockType();
+    NewBlockInfo.StaticMesh = InCodeBlock->GetStaticMesh();
+
+    CodeBlocks.Add(NewBlockInfo);
+    UpdateMagicCircle(); // This will call the blueprint implementation
 }
 
-void ACMagicCircle::RomoveCodeBlock()
+// Removes the last code block from the magic circle
+void ACMagicCircle::RemoveCodeBlock()
 {
-	// 코드 블록이 16개 이상 입력되지 못하게 예외 처리
-	if (0 >= CodeBlocks.Num())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CodeBlock is none"));
-		return;
-	}
+    if (CodeBlocks.Num() <= 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("CodeBlock is none"));
+        return;
+    }
 
-	CodeBlocks.Pop();
-
-	UpdateMagicCircle();
+    CodeBlocks.Pop();
+    UpdateMagicCircle(); // This will call the blueprint implementation
 }
-
