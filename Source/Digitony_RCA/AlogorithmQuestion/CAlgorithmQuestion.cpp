@@ -13,6 +13,7 @@ ACAlgorithmQuestion::ACAlgorithmQuestion()
 void ACAlgorithmQuestion::BeginPlay()
 {
     Super::BeginPlay();
+//    UE_LOG(LogTemp, Log, TEXT("ACAlgorithmQuestion::BeginPlay() 호출됨"));
     LoadMapData();
 }
 
@@ -45,12 +46,20 @@ void ACAlgorithmQuestion::LoadMapData()
     Depth = Row->Depth;
     Map = Row->Map;
 
-    CreateMap();
+    UE_LOG(LogTemp, Log, TEXT("맵 데이터 로드 완료: Width=%d, Height=%d, Depth=%d"), Width, Height, Depth);
+
+    // 맵 생성 로직을 비동기적으로 처리
+    AsyncTask(ENamedThreads::GameThread, [this]()
+        {
+            CreateMap();
+        });
 }
 
 // Create Map
 void ACAlgorithmQuestion::CreateMap()
 {
+//    UE_LOG(LogTemp, Log, TEXT("CreateMap() 호출됨"));
+
     StartBlockLocation = FVector::ZeroVector; // 시작 위치 초기화
 
     for (int32 Z = 0; Z < Depth; Z++)
@@ -85,6 +94,10 @@ void ACAlgorithmQuestion::CreateMap()
                     continue;
                 }
 
+                // 이동성을 Movable로 설정
+                NewMesh->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
+                NewMesh->GetStaticMeshComponent()->SetWorldScale3D(FVector(0.1f));
+
                 CreatedActors.Add(NewMesh); // 생성된 액터를 배열에 추가
 
                 switch (MapValue)
@@ -101,6 +114,7 @@ void ACAlgorithmQuestion::CreateMap()
                     {
                         NewMesh->GetStaticMeshComponent()->SetStaticMesh(StartBlock);
                         StartBlockLocation = NewLocation; // 시작 위치 저장
+                        UE_LOG(LogTemp, Log, TEXT("StartBlock 위치: %s"), *StartBlockLocation.ToString());
                     }
                     break;
 
@@ -118,6 +132,8 @@ void ACAlgorithmQuestion::CreateMap()
             }
         }
     }
+
+    UE_LOG(LogTemp, Log, TEXT("CreateMap() 완료됨"));
 }
 
 // Start Magic
@@ -152,6 +168,7 @@ void ACAlgorithmQuestion::ExecuteCodeBlock()
 {
     if (CurrentCodeBlockIndex < MagicCircle->CodeBlocks.Num())
     {
+        UE_LOG(LogTemp, Log, TEXT("코드 블록 실행: %d"), CurrentCodeBlockIndex);
         MoveLuni(MagicCircle->CodeBlocks[CurrentCodeBlockIndex].CodeBlockType);
         CurrentCodeBlockIndex++;
     }
@@ -159,7 +176,7 @@ void ACAlgorithmQuestion::ExecuteCodeBlock()
     {
         // 모든 코드 블록 실행 완료 시 타이머 정지
         GetWorldTimerManager().ClearTimer(CodeBlockTimerHandle);
-        // UE_LOG(LogTemp, Log, TEXT("모든 코드 블록 실행 완료"));
+        //UE_LOG(LogTemp, Log, TEXT("모든 코드 블록 실행 완료"));
     }
 }
 
@@ -173,71 +190,78 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
     }
 
     FVector NewLocation = Luni->GetActorLocation();
+    FVector OriginalLocation = NewLocation;  // 원래 위치 저장
 
     switch (InCodeBlockType)
     {
     case ECodeBlockType::Forward:
         NewLocation += Luni->GetActorForwardVector() * Spacing;
+        UE_LOG(LogTemp, Log, TEXT("전진 중: NewLocation = %s"), *NewLocation.ToString());
         break;
     case ECodeBlockType::RightTurn:
         Luni->AddActorLocalRotation(FRotator(0.f, 90.f, 0.f));
+        UE_LOG(LogTemp, Log, TEXT("우회전 중"));
         break;
     case ECodeBlockType::LeftTurn:
         Luni->AddActorLocalRotation(FRotator(0.f, -90.f, 0.f));
+        UE_LOG(LogTemp, Log, TEXT("좌회전 중"));
         break;
     case ECodeBlockType::Jump:
         NewLocation += FVector(0.f, 0.f, Spacing);
         NewLocation += Luni->GetActorForwardVector() * Spacing;
+        UE_LOG(LogTemp, Log, TEXT("점프 중: NewLocation = %s"), *NewLocation.ToString());
         break;
     case ECodeBlockType::Repetition:
-        // 반복 로직 구현
         break;
     case ECodeBlockType::Number:
-        // 숫자 로직 구현
         break;
     default:
-        break;
+        UE_LOG(LogTemp, Warning, TEXT("유효하지 않은 코드 블록 타입입니다."));
+        return;
     }
 
-    // 장애물 및 EndBlock 오버랩 검사
+    // 충돌 검사 범위 조정
     FCollisionQueryParams CollisionParams;
-    if (GetWorld()->OverlapBlockingTestByChannel(NewLocation, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(50.f), CollisionParams))
+    const float CollisionRadius = Spacing * 0.4f;  // 충돌 반경 설정
+    TArray<FOverlapResult> Overlaps;
+
+    if (GetWorld()->OverlapMultiByChannel(Overlaps, NewLocation, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(CollisionRadius), CollisionParams))
     {
-        // HitResult는 필요 없음
-        TArray<FOverlapResult> Overlaps;
-        if (GetWorld()->OverlapMultiByChannel(Overlaps, NewLocation, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(50.f), CollisionParams))
+        for (auto& Overlap : Overlaps)
         {
-            for (auto& Overlap : Overlaps)
+            AStaticMeshActor* HitActor = Cast<AStaticMeshActor>(Overlap.GetActor());
+
+            if (HitActor)
             {
-                AStaticMeshActor* HitActor = Cast<AStaticMeshActor>(Overlap.GetActor());
+                UStaticMesh* HitMesh = HitActor->GetStaticMeshComponent()->GetStaticMesh();
 
-                if (HitActor)
+                // 장애물과 충돌했을 경우
+                if (HitMesh == ObstacleBlock)
                 {
-                    UStaticMesh* HitMesh = HitActor->GetStaticMeshComponent()->GetStaticMesh();
-
-                    if (HitMesh == ObstacleBlock)
-                    {
-                        UE_LOG(LogTemp, Warning, TEXT("Luni가 장애물과 겹쳤습니다."));
-                        return;
-                    }
-                    else if (HitMesh == EndBlock)
-                    {
-                        UE_LOG(LogTemp, Log, TEXT("Luni가 EndBlock에 도달했습니다."));
-                        
-                        FinishMagic();
-                        return;
-                    }
+                    UE_LOG(LogTemp, Warning, TEXT("Luni가 장애물과 충돌했습니다."));
+                    return; // 충돌 시 이동 중단
+                }
+                // EndBlock에 도달했을 경우
+                else if (HitMesh == EndBlock)
+                {
+                    UE_LOG(LogTemp, Log, TEXT("Luni가 EndBlock에 도달했습니다."));
+                    FinishMagic(); // EndBlock에 도달하면 FinishMagic 호출
+                    return;
                 }
             }
         }
     }
 
+    // 충돌이 없다면 위치 업데이트
     Luni->SetActorLocation(NewLocation);
+    UE_LOG(LogTemp, Log, TEXT("Luni의 새 위치: %s"), *NewLocation.ToString());
 }
 
 // Clear Map
 void ACAlgorithmQuestion::ClearMap()
 {
+//    UE_LOG(LogTemp, Log, TEXT("ClearMap() 호출됨"));
+
     // 생성된 모든 액터 제거
     for (AStaticMeshActor* Actor : CreatedActors)
     {
