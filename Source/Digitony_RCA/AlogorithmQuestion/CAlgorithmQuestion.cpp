@@ -58,8 +58,6 @@ void ACAlgorithmQuestion::LoadMapData()
 // Create Map
 void ACAlgorithmQuestion::CreateMap()
 {
-//    UE_LOG(LogTemp, Log, TEXT("CreateMap() 호출됨"));
-
     StartBlockLocation = FVector::ZeroVector; // 시작 위치 초기화
 
     for (int32 Z = 0; Z < Depth; Z++)
@@ -98,7 +96,8 @@ void ACAlgorithmQuestion::CreateMap()
                 NewMesh->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
                 NewMesh->GetStaticMeshComponent()->SetWorldScale3D(FVector(0.1f));
 
-                CreatedActors.Add(NewMesh); // 생성된 액터를 배열에 추가
+                // 생성된 액터를 배열에 추가
+                CreatedActors.Add(NewMesh);
 
                 switch (MapValue)
                 {
@@ -260,8 +259,6 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
 // Clear Map
 void ACAlgorithmQuestion::ClearMap()
 {
-//    UE_LOG(LogTemp, Log, TEXT("ClearMap() 호출됨"));
-
     // 생성된 모든 액터 제거
     for (AStaticMeshActor* Actor : CreatedActors)
     {
