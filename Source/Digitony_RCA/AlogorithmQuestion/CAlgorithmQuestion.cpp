@@ -1,5 +1,6 @@
 #include "AlogorithmQuestion/CAlgorithmQuestion.h"
 #include "Engine/StaticMeshActor.h"
+#include "Containers/Array.h"
 #include "TimerManager.h"
 
 // 생성자
@@ -182,6 +183,10 @@ void ACAlgorithmQuestion::ExecuteCodeBlock()
 // Move Luni
 void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
 {
+    static int32 RepeatCount = 0;
+    static int32 RepeatStartIndex = 0;
+    static bool bInRepetition = false;
+
     if (!Luni)
     {
         UE_LOG(LogTemp, Warning, TEXT("Luni가 설정되지 않았습니다."));
@@ -211,15 +216,49 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
         UE_LOG(LogTemp, Log, TEXT("점프 중: NewLocation = %s"), *NewLocation.ToString());
         break;
     case ECodeBlockType::Repetition:
+        // Repetition 블록이 시작되면, 반복 시작 인덱스 저장
+        RepeatStartIndex = CurrentCodeBlockIndex;
+        bInRepetition = true;
+//        UE_LOG(LogTemp, Log, TEXT("반복 블록 시작"));
         break;
-    case ECodeBlockType::Number:
+    case ECodeBlockType::Number_2:
+    case ECodeBlockType::Number_3:
+    case ECodeBlockType::Number_4:
+        if (bInRepetition)
+        {
+            // Number 블록이 나오면, 반복 횟수 설정
+            RepeatCount = static_cast<int32>(InCodeBlockType) - static_cast<int32>(ECodeBlockType::Number_2) + 2; // 2, 3, 4를 직접 변환
+            bInRepetition = false;
+            UE_LOG(LogTemp, Log, TEXT("반복 횟수 설정: %d"), RepeatCount);
+        }
         break;
     default:
         UE_LOG(LogTemp, Warning, TEXT("유효하지 않은 코드 블록 타입입니다."));
         return;
     }
 
-    // 충돌 검사 범위 조정
+    // Repetition 블록 처리
+    if (!bInRepetition && RepeatCount > 0)
+    {
+        // 현재 인덱스가 마지막 코드 블록이면 반복
+        if (CurrentCodeBlockIndex >= MagicCircle->CodeBlocks.Num() - 1 ||
+            CurrentCodeBlockIndex == RepeatStartIndex + RepeatCount * (RepeatStartIndex + 1))
+        {
+            CurrentCodeBlockIndex = RepeatStartIndex;
+            RepeatCount--;
+
+            // Repetition 종료 시점에 도달하면 반복 종료
+            if (RepeatCount <= 0)
+            {
+//                UE_LOG(LogTemp, Log, TEXT("반복 블록 종료"));
+                CurrentCodeBlockIndex = RepeatStartIndex + 1;
+                // 여기서 실행을 종료하도록 해야 합니다.
+                return;
+            }
+        }
+    }
+
+    // 충돌 검사
     FCollisionQueryParams CollisionParams;
     const float CollisionRadius = Spacing * 0.4f;  // 충돌 반경 설정
     TArray<FOverlapResult> Overlaps;
@@ -259,17 +298,17 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
 // Clear Map
 void ACAlgorithmQuestion::ClearMap()
 {
-    // 생성된 모든 액터 제거
+    // Clear the array of created actors
     for (AStaticMeshActor* Actor : CreatedActors)
     {
-        if (Actor)
+        if (Actor) // Check if the actor is valid
         {
-            Actor->Destroy();
+            Actor->Destroy(); // Mark the actor for deletion
         }
     }
-    CreatedActors.Empty();
+    CreatedActors.Empty(); // Clear the array to prevent further access
 
-    // Luni 제거
+    // Destroy Luni
     if (Luni)
     {
         Luni->Destroy();
@@ -277,4 +316,5 @@ void ACAlgorithmQuestion::ClearMap()
     }
 
     UE_LOG(LogTemp, Log, TEXT("맵이 클리어되었습니다."));
+
 }
