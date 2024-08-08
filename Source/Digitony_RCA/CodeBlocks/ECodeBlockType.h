@@ -11,5 +11,7 @@ enum class ECodeBlockType : uint8
 	LeftTurn		UMETA(DisplayName = "LeftTurn"),
 	Jump			UMETA(DisplayName = "Jump"),
 	Repetition		UMETA(DisplayName = "Repetition"),
-	Number			UMETA(DisplayName = "Number"),
+	Number_2			UMETA(DisplayName = "Number2"),
+	Number_3			UMETA(DisplayName = "Number3"),
+	Number_4			UMETA(DisplayName = "Number4")
 };
