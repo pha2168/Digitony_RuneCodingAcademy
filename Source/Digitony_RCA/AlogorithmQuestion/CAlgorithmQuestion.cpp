@@ -57,6 +57,7 @@ void ACAlgorithmQuestion::LoadMapData()
 }
 
 // Create Map
+// Create Map
 void ACAlgorithmQuestion::CreateMap()
 {
     StartBlockLocation = FVector::ZeroVector; // 시작 위치 초기화
@@ -125,6 +126,13 @@ void ACAlgorithmQuestion::CreateMap()
                     }
                     break;
 
+                case '4':
+                    if (TransparentObstacleBlock)
+                    {
+                        NewMesh->GetStaticMeshComponent()->SetStaticMesh(TransparentObstacleBlock);
+                    }
+                    break;
+
                 default:
                     UE_LOG(LogTemp, Warning, TEXT("유효하지 않은 맵 데이터: %c"), MapValue);
                     break;
@@ -135,6 +143,7 @@ void ACAlgorithmQuestion::CreateMap()
 
     UE_LOG(LogTemp, Log, TEXT("CreateMap() 완료됨"));
 }
+
 
 // Start Magic
 void ACAlgorithmQuestion::StartMagic()
@@ -219,7 +228,6 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
         // Repetition 블록이 시작되면, 반복 시작 인덱스 저장
         RepeatStartIndex = CurrentCodeBlockIndex;
         bInRepetition = true;
-//        UE_LOG(LogTemp, Log, TEXT("반복 블록 시작"));
         break;
     case ECodeBlockType::Number_2:
     case ECodeBlockType::Number_3:
@@ -240,19 +248,15 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
     // Repetition 블록 처리
     if (!bInRepetition && RepeatCount > 0)
     {
-        // 현재 인덱스가 마지막 코드 블록이면 반복
         if (CurrentCodeBlockIndex >= MagicCircle->CodeBlocks.Num() - 1 ||
             CurrentCodeBlockIndex == RepeatStartIndex + RepeatCount * (RepeatStartIndex + 1))
         {
             CurrentCodeBlockIndex = RepeatStartIndex;
             RepeatCount--;
 
-            // Repetition 종료 시점에 도달하면 반복 종료
             if (RepeatCount <= 0)
             {
-//                UE_LOG(LogTemp, Log, TEXT("반복 블록 종료"));
                 CurrentCodeBlockIndex = RepeatStartIndex + 1;
-                // 여기서 실행을 종료하도록 해야 합니다.
                 return;
             }
         }
@@ -274,7 +278,7 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
                 UStaticMesh* HitMesh = HitActor->GetStaticMeshComponent()->GetStaticMesh();
 
                 // 장애물과 충돌했을 경우
-                if (HitMesh == ObstacleBlock)
+                if (HitMesh == ObstacleBlock || HitMesh == TransparentObstacleBlock)
                 {
                     UE_LOG(LogTemp, Warning, TEXT("Luni가 장애물과 충돌했습니다."));
                     return; // 충돌 시 이동 중단
@@ -294,6 +298,7 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
     Luni->SetActorLocation(NewLocation);
     UE_LOG(LogTemp, Log, TEXT("Luni의 새 위치: %s"), *NewLocation.ToString());
 }
+
 
 // Clear Map
 void ACAlgorithmQuestion::ClearMap()

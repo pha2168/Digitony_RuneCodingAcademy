@@ -57,6 +57,25 @@ public:
     UFUNCTION(BlueprintImplementableEvent)
     void UpdateMagicCircle();
 
+    UFUNCTION(BlueprintCallable)
+    void EvaluateScore();
+
 private:
     int CodeBlockArrayNum = 16;
+
+public:
+    UPROPERTY(EditAnywhere,  Category = "Scoring")
+    int32 PerfectThreshold;
+
+    UPROPERTY(EditAnywhere, Category = "Scoring")
+    int32 GoodThreshold;
+
+    UPROPERTY(EditAnywhere, Category = "Spawning")
+    TSubclassOf<AActor> PerfectActorClass;
+
+    UPROPERTY(EditAnywhere, Category = "Spawning")
+    TSubclassOf<AActor> GoodActorClass;
+
+    UPROPERTY(EditAnywhere, Category = "Spawning")
+    TSubclassOf<AActor> BadActorClass;
 };

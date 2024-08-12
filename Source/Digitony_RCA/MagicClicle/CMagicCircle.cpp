@@ -1,6 +1,7 @@
 #include "CMagicCircle.h"
 #include "CodeBlocks/CCodeBlockBase.h"
 #include "Components/BoxComponent.h"
+#include "GameFramework/Actor.h"
 
 // Constructor
 ACMagicCircle::ACMagicCircle()
@@ -14,6 +15,10 @@ ACMagicCircle::ACMagicCircle()
     // Set up component hierarchy
     SetRootComponent(MagicCircleMeshComponent);
     BoxCollisionComponent->SetupAttachment(GetRootComponent());
+
+    // Initialize scoring thresholds (Default values, can be adjusted in the Blueprint)
+    PerfectThreshold = 3;
+    GoodThreshold = 5;
 }
 
 // Called when the game starts or when spawned
@@ -63,4 +68,39 @@ void ACMagicCircle::RemoveCodeBlock()
 
     CodeBlocks.Pop();
     UpdateMagicCircle(); // This will call the blueprint implementation
+}
+
+// Evaluate the score based on the number of code blocks and spawn the appropriate actor
+void ACMagicCircle::EvaluateScore()
+{
+    int32 CodeBlockCount = CodeBlocks.Num();
+
+    TSubclassOf<AActor> ActorToSpawn = nullptr;
+
+    if (CodeBlockCount <= PerfectThreshold)
+    {
+        UE_LOG(LogTemp, Log, TEXT("Perfect Score! CodeBlockCount = %d"), CodeBlockCount);
+        ActorToSpawn = PerfectActorClass;
+    }
+    else if (CodeBlockCount <= GoodThreshold)
+    {
+        UE_LOG(LogTemp, Log, TEXT("Good Score! CodeBlockCount = %d"), CodeBlockCount);
+        ActorToSpawn = GoodActorClass;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Log, TEXT("Bad Score! CodeBlockCount = %d"), CodeBlockCount);
+        ActorToSpawn = BadActorClass;
+    }
+
+    if (ActorToSpawn)
+    {
+        FVector SpawnLocation = GetActorLocation() + FVector(200, 0, 0); // Set the spawn location relative to the MagicCircle
+        FRotator SpawnRotation = FRotator::ZeroRotator; // Default rotation
+        AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn, SpawnLocation, SpawnRotation);
+        if (SpawnedActor)
+        {
+            UE_LOG(LogTemp, Log, TEXT("Actor spawned successfully"));
+        }
+    }
 }
