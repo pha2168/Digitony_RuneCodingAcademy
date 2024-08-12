@@ -30,6 +30,9 @@ protected:
 	TObjectPtr<UStaticMesh> ObstacleBlock;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UStaticMesh> TransparentObstacleBlock;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UStaticMesh> StartBlock;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
