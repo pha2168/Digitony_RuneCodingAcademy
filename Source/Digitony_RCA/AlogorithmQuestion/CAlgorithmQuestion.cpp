@@ -3,6 +3,7 @@
 #include "Containers/Array.h"
 #include "TimerManager.h"
 
+
 // 생성자
 ACAlgorithmQuestion::ACAlgorithmQuestion()
 {
@@ -16,6 +17,8 @@ void ACAlgorithmQuestion::BeginPlay()
     Super::BeginPlay();
 //    UE_LOG(LogTemp, Log, TEXT("ACAlgorithmQuestion::BeginPlay() 호출됨"));
     LoadMapData();
+
+    
 }
 
 // Tick 함수
@@ -154,11 +157,12 @@ void ACAlgorithmQuestion::StartMagic()
         return;
     }
 
-    // Luni를 StartBlock의 위치로 이동
+    // Luni를 StartBlock의 위치로 이동하고 초기 회전을 설정
     if (Luni && !StartBlockLocation.IsZero())
     {
         Luni->SetActorLocation(StartBlockLocation);
-        UE_LOG(LogTemp, Log, TEXT("Luni가 시작 위치로 이동되었습니다."));
+        Luni->SetActorRotation(InitialLuniRotation);  // 초기 회전 설정
+        UE_LOG(LogTemp, Log, TEXT("Luni가 시작 위치로 이동되었으며 초기 회전이 설정되었습니다."));
     }
     else
     {
@@ -171,6 +175,7 @@ void ACAlgorithmQuestion::StartMagic()
     // 타이머 시작 (TimerInterval을 사용하여 타이머 간격 설정)
     GetWorldTimerManager().SetTimer(CodeBlockTimerHandle, this, &ACAlgorithmQuestion::ExecuteCodeBlock, TimerInterval, true);
 }
+
 
 // Execute Code Block
 void ACAlgorithmQuestion::ExecuteCodeBlock()
