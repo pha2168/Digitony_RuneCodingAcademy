@@ -2,12 +2,14 @@
 #include "Components/CheckBox.h"
 #include "Components/Slider.h"
 #include "Sound/SoundClass.h"
+#include "Components/AudioComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 void UCSoundWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    // 체크박스와 슬라이더의 초기 상태 설정 및 이벤트 바인딩
     if (SoundToggleCheckBox)
     {
         SoundToggleCheckBox->SetIsChecked(bIsSoundEnabled);
@@ -20,27 +22,45 @@ void UCSoundWidget::NativeConstruct()
         VolumeSlider->OnValueChanged.AddDynamic(this, &UCSoundWidget::OnVolumeSliderChanged);
     }
 
-    // 초기 상태에 따른 사운드 클래스의 볼륨 설정
-    if (SoundClass)
+    if (SoundCue) // Removed SoundClass check; SoundCue suffices for sound playback
     {
-        SoundClass->Properties.Volume = bIsSoundEnabled ? InitialVolume : 0.0f;
+        AudioComponent = UGameplayStatics::SpawnSound2D(this, SoundCue);
+        if (AudioComponent)
+        {
+            // Set initial volume based on sound toggle state
+            AudioComponent->SetVolumeMultiplier(bIsSoundEnabled ? InitialVolume : 0.0f);
+        }
     }
 }
 
 void UCSoundWidget::OnSoundToggleChanged(bool bIsChecked)
 {
-    // 체크박스 상태에 따라 사운드 클래스의 볼륨을 조절
-    if (SoundClass)
+    if (AudioComponent)
     {
-        SoundClass->Properties.Volume = bIsChecked ? VolumeSlider->GetValue() : 0.0f;
+        if (bIsChecked)
+        {
+            // Ensure audio component is playing if sound is enabled
+            if (!AudioComponent->IsPlaying())
+            {
+                AudioComponent->Play();
+            }
+            AudioComponent->SetVolumeMultiplier(VolumeSlider->GetValue());
+        }
+        else
+        {
+            AudioComponent->SetVolumeMultiplier(0.0f);
+        }
     }
 }
 
 void UCSoundWidget::OnVolumeSliderChanged(float Value)
 {
-    // 슬라이더 값에 따라 사운드 클래스의 볼륨을 조절
-    if (SoundClass && SoundToggleCheckBox->IsChecked())
+    if (AudioComponent && SoundToggleCheckBox->IsChecked())
     {
-        SoundClass->Properties.Volume = Value;
+        if (!AudioComponent->IsPlaying())
+        {
+            AudioComponent->Play(); // Resume playback if not already playing
+        }
+        AudioComponent->SetVolumeMultiplier(Value);
     }
 }

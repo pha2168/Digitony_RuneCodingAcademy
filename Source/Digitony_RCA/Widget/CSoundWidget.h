@@ -7,6 +7,8 @@
 class UCheckBox;
 class USlider;
 class USoundClass;
+class UAudioComponent;
+class USoundCue;
 
 UCLASS()
 class DIGITONY_RCA_API UCSoundWidget : public UUserWidget
@@ -25,6 +27,9 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
     USoundClass* SoundClass;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+    USoundCue* SoundCue;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (ClampMin = "0.0", ClampMax = "1.0"))
     float InitialVolume = 1.0f;
 
@@ -32,6 +37,9 @@ protected:
     bool bIsSoundEnabled = true;
 
 private:
+    UPROPERTY()
+    UAudioComponent* AudioComponent;
+
     UFUNCTION()
     void OnSoundToggleChanged(bool bIsChecked);
 
