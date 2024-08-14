@@ -60,6 +60,7 @@ public:
     UFUNCTION(BlueprintCallable)
     void EvaluateScore();
 
+
 private:
     int CodeBlockArrayNum = 16;
 
