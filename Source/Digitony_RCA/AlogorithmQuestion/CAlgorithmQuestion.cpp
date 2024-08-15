@@ -136,6 +136,15 @@ void ACAlgorithmQuestion::CreateMap()
                     }
                     break;
 
+                case '5':
+                    if (CoinMesh)
+                    {
+                        NewMesh->GetStaticMeshComponent()->SetStaticMesh(CoinMesh);
+                        CreatedCoins.Add(NewMesh);  // 코인을 배열에 추가
+                        UE_LOG(LogTemp, Log, TEXT("코인 소환: 위치 = %s"), *NewLocation.ToString());
+                    }
+                    break;
+
                 default:
                     UE_LOG(LogTemp, Warning, TEXT("유효하지 않은 맵 데이터: %c"), MapValue);
                     break;
@@ -282,6 +291,14 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
             {
                 UStaticMesh* HitMesh = HitActor->GetStaticMeshComponent()->GetStaticMesh();
 
+                if (HitMesh == CoinMesh)
+                {
+                    UE_LOG(LogTemp, Log, TEXT("루니가 코인을 먹었습니다."));
+                    CreatedCoins.Remove(HitActor);  // 코인을 배열에서 제거
+                    HitActor->Destroy();  // 코인 삭제
+                    return;
+                }
+
                 // 장애물과 충돌했을 경우
                 if (HitMesh == ObstacleBlock || HitMesh == TransparentObstacleBlock)
                 {
@@ -291,6 +308,13 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
                 // EndBlock에 도달했을 경우
                 else if (HitMesh == EndBlock)
                 {
+
+                    if (CreatedCoins.Num() > 0)
+                    {
+                        UE_LOG(LogTemp, Warning, TEXT("모든 코인을 먹기 전까지 맵을 클리어할 수 없습니다."));
+                        return;  // 코인이 남아있으면 맵을 클리어하지 않음
+                    }
+
                     UE_LOG(LogTemp, Log, TEXT("Luni가 EndBlock에 도달했습니다."));
                     FinishMagic(); // EndBlock에 도달하면 FinishMagic 호출
                     return;

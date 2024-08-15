@@ -45,6 +45,11 @@ protected:
     TObjectPtr<UStaticMesh> EndBlock;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TObjectPtr<UStaticMesh> CoinMesh;  // 코인 메쉬
+
+    TArray<AStaticMeshActor*> CreatedCoins;  // 생성된 코인들을 저장할 배열
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float Spacing;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
