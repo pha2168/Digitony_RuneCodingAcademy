@@ -238,8 +238,12 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
         NewLocation += Luni->GetActorForwardVector() * Spacing;
         UE_LOG(LogTemp, Log, TEXT("점프 중: NewLocation = %s"), *NewLocation.ToString());
         break;
+    case ECodeBlockType::DownJump:
+        NewLocation -= FVector(0.f, 0.f, Spacing);  // Z축 아래로 이동
+        NewLocation += Luni->GetActorForwardVector() * Spacing;
+        UE_LOG(LogTemp, Log, TEXT("다운 점프 중: NewLocation = %s"), *NewLocation.ToString());
+        break;
     case ECodeBlockType::Repetition:
-        // Repetition 블록이 시작되면, 반복 시작 인덱스 저장
         RepeatStartIndex = CurrentCodeBlockIndex;
         bInRepetition = true;
         break;
@@ -248,8 +252,7 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
     case ECodeBlockType::Number_4:
         if (bInRepetition)
         {
-            // Number 블록이 나오면, 반복 횟수 설정
-            RepeatCount = static_cast<int32>(InCodeBlockType) - static_cast<int32>(ECodeBlockType::Number_2) + 2; // 2, 3, 4를 직접 변환
+            RepeatCount = static_cast<int32>(InCodeBlockType) - static_cast<int32>(ECodeBlockType::Number_2) + 2;
             bInRepetition = false;
             UE_LOG(LogTemp, Log, TEXT("반복 횟수 설정: %d"), RepeatCount);
         }
@@ -278,7 +281,7 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
 
     // 충돌 검사
     FCollisionQueryParams CollisionParams;
-    const float CollisionRadius = Spacing * 0.4f;  // 충돌 반경 설정
+    const float CollisionRadius = Spacing * 0.4f;
     TArray<FOverlapResult> Overlaps;
 
     if (GetWorld()->OverlapMultiByChannel(Overlaps, NewLocation, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(CollisionRadius), CollisionParams))
@@ -294,29 +297,26 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
                 if (HitMesh == CoinMesh)
                 {
                     UE_LOG(LogTemp, Log, TEXT("루니가 코인을 먹었습니다."));
-                    CreatedCoins.Remove(HitActor);  // 코인을 배열에서 제거
-                    HitActor->Destroy();  // 코인 삭제
+                    CreatedCoins.Remove(HitActor);
+                    HitActor->Destroy();
                     return;
                 }
 
-                // 장애물과 충돌했을 경우
                 if (HitMesh == ObstacleBlock || HitMesh == TransparentObstacleBlock)
                 {
                     UE_LOG(LogTemp, Warning, TEXT("Luni가 장애물과 충돌했습니다."));
-                    return; // 충돌 시 이동 중단
+                    return;
                 }
-                // EndBlock에 도달했을 경우
                 else if (HitMesh == EndBlock)
                 {
-
                     if (CreatedCoins.Num() > 0)
                     {
                         UE_LOG(LogTemp, Warning, TEXT("모든 코인을 먹기 전까지 맵을 클리어할 수 없습니다."));
-                        return;  // 코인이 남아있으면 맵을 클리어하지 않음
+                        return;
                     }
 
                     UE_LOG(LogTemp, Log, TEXT("Luni가 EndBlock에 도달했습니다."));
-                    FinishMagic(); // EndBlock에 도달하면 FinishMagic 호출
+                    FinishMagic();
                     return;
                 }
             }
@@ -327,6 +327,7 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
     Luni->SetActorLocation(NewLocation);
     UE_LOG(LogTemp, Log, TEXT("Luni의 새 위치: %s"), *NewLocation.ToString());
 }
+
 
 
 // Clear Map
