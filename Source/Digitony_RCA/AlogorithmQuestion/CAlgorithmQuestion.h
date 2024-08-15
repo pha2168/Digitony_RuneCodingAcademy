@@ -29,7 +29,7 @@ public:
     virtual void Tick(float DeltaTime) override;
 
 protected:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
     FDataTableRowHandle MapData;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
