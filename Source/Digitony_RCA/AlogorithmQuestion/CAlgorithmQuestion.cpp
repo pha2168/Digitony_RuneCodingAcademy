@@ -239,8 +239,8 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
         UE_LOG(LogTemp, Log, TEXT("점프 중: NewLocation = %s"), *NewLocation.ToString());
         break;
     case ECodeBlockType::DownJump:
-        NewLocation -= FVector(0.f, 0.f, Spacing);  // Z축 아래로 이동
         NewLocation += Luni->GetActorForwardVector() * Spacing;
+        NewLocation -= FVector(0.f, 0.f, Spacing);  // Z축 아래로 이동
         UE_LOG(LogTemp, Log, TEXT("다운 점프 중: NewLocation = %s"), *NewLocation.ToString());
         break;
     case ECodeBlockType::Repetition:
