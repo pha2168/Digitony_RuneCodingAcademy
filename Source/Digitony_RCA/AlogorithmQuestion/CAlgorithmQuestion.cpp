@@ -217,7 +217,6 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
     }
 
     FVector NewLocation = Luni->GetActorLocation();
-    FVector OriginalLocation = NewLocation;  // 원래 위치 저장
 
     switch (InCodeBlockType)
     {
@@ -225,28 +224,34 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
         NewLocation += Luni->GetActorForwardVector() * Spacing;
         UE_LOG(LogTemp, Log, TEXT("전진 중: NewLocation = %s"), *NewLocation.ToString());
         break;
+
     case ECodeBlockType::RightTurn:
         Luni->AddActorLocalRotation(FRotator(0.f, 90.f, 0.f));
         UE_LOG(LogTemp, Log, TEXT("우회전 중"));
         break;
+
     case ECodeBlockType::LeftTurn:
         Luni->AddActorLocalRotation(FRotator(0.f, -90.f, 0.f));
         UE_LOG(LogTemp, Log, TEXT("좌회전 중"));
         break;
+
     case ECodeBlockType::Jump:
-        NewLocation += FVector(0.f, 0.f, Spacing);
-        NewLocation += Luni->GetActorForwardVector() * Spacing;
+        NewLocation += FVector(0.f, 0.f, Spacing);  // 위로 점프
+        NewLocation += Luni->GetActorForwardVector() * Spacing;  // 앞으로 이동
         UE_LOG(LogTemp, Log, TEXT("점프 중: NewLocation = %s"), *NewLocation.ToString());
         break;
+
     case ECodeBlockType::DownJump:
-        NewLocation += Luni->GetActorForwardVector() * Spacing;
-        NewLocation -= FVector(0.f, 0.f, Spacing);  // Z축 아래로 이동
-        UE_LOG(LogTemp, Log, TEXT("다운 점프 중: NewLocation = %s"), *NewLocation.ToString());
+        NewLocation += Luni->GetActorForwardVector() * Spacing;  // 앞으로 이동
+        NewLocation -= FVector(0.f, 0.f, Spacing);  // 아래로 점프
+        UE_LOG(LogTemp, Log, TEXT("하강 중: NewLocation = %s"), *NewLocation.ToString());
         break;
+
     case ECodeBlockType::Repetition:
         RepeatStartIndex = CurrentCodeBlockIndex;
         bInRepetition = true;
         break;
+
     case ECodeBlockType::Number_2:
     case ECodeBlockType::Number_3:
     case ECodeBlockType::Number_4:
@@ -255,29 +260,31 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
             RepeatCount = static_cast<int32>(InCodeBlockType) - static_cast<int32>(ECodeBlockType::Number_2) + 2;
             bInRepetition = false;
             UE_LOG(LogTemp, Log, TEXT("반복 횟수 설정: %d"), RepeatCount);
+            
+            // Repetition 블록 처리
+            if (!bInRepetition && RepeatCount > 0)
+            {
+                if (CurrentCodeBlockIndex >= MagicCircle->CodeBlocks.Num() - 1)
+                {
+                    RepeatCount--;
+                    CurrentCodeBlockIndex = RepeatStartIndex;
+
+                    if (RepeatCount <= 0)
+                    {
+                        CurrentCodeBlockIndex++;
+                        return;
+                    }
+                }
+            }
         }
         break;
+
     default:
         UE_LOG(LogTemp, Warning, TEXT("유효하지 않은 코드 블록 타입입니다."));
         return;
     }
 
-    // Repetition 블록 처리
-    if (!bInRepetition && RepeatCount > 0)
-    {
-        if (CurrentCodeBlockIndex >= MagicCircle->CodeBlocks.Num() - 1 ||
-            CurrentCodeBlockIndex == RepeatStartIndex + RepeatCount * (RepeatStartIndex + 1))
-        {
-            CurrentCodeBlockIndex = RepeatStartIndex;
-            RepeatCount--;
-
-            if (RepeatCount <= 0)
-            {
-                CurrentCodeBlockIndex = RepeatStartIndex + 1;
-                return;
-            }
-        }
-    }
+    
 
     // 충돌 검사
     FCollisionQueryParams CollisionParams;
@@ -327,6 +334,9 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
     Luni->SetActorLocation(NewLocation);
     UE_LOG(LogTemp, Log, TEXT("Luni의 새 위치: %s"), *NewLocation.ToString());
 }
+
+
+
 
 
 
