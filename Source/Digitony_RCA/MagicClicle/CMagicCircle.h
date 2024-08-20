@@ -65,10 +65,10 @@ private:
     int CodeBlockArrayNum = 16;
 
 public:
-    UPROPERTY(EditAnywhere,  Category = "Scoring")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scoring")
     int32 PerfectThreshold;
 
-    UPROPERTY(EditAnywhere, Category = "Scoring")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scoring")
     int32 GoodThreshold;
 
     UPROPERTY(EditAnywhere, Category = "Spawning")

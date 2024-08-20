@@ -67,6 +67,10 @@ protected:
     UPROPERTY(BlueprintReadOnly)
     FVector StartBlockLocation;
 
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Luni")
+    FRotator InitialLuniRotation;
+
 public:
     UFUNCTION(BlueprintCallable)
     void LoadMapData();
@@ -89,6 +93,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void ExecuteCodeBlock();
 
+    UFUNCTION(blueprintcallable)
+    void ProcessRepetitionBlocks(const TArray<ECodeBlockType>& blocks, int32 repeatcount);
+
 private:
     int32 ID;
     int32 Width;
@@ -102,7 +109,5 @@ private:
     int32 CurrentCodeBlockIndex;
 
 private:
-    UPROPERTY(EditAnywhere, Category = "Luni")
-    FRotator InitialLuniRotation;
 
 };
