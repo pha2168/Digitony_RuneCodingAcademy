@@ -158,6 +158,10 @@ void ACAlgorithmQuestion::StartMagic()
         return;
     }
 
+    // 맵 재설정 및 코인 재생성
+    ClearMap();
+    LoadMapData();
+
     if (Luni && !StartBlockLocation.IsZero())
     {
         Luni->SetActorLocation(StartBlockLocation);
@@ -296,7 +300,9 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
         return;
     }
 
-    // 충돌 검사 및 처리
+    // 위치를 먼저 업데이트한 후에 충돌 검사 및 처리
+    Luni->SetActorLocation(NewLocation);
+
     FCollisionQueryParams CollisionParams;
     const float CollisionRadius = Spacing * 0.4f;
     TArray<FOverlapResult> Overlaps;
@@ -316,7 +322,6 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
                     UE_LOG(LogTemp, Log, TEXT("루니가 코인을 먹었습니다."));
                     CreatedCoins.Remove(HitActor);
                     HitActor->Destroy();
-                    return;
                 }
 
                 if (HitMesh == ObstacleBlock || HitMesh == TransparentObstacleBlock)
@@ -340,8 +345,6 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
         }
     }
 
-    // 충돌이 없다면 위치 업데이트
-    Luni->SetActorLocation(NewLocation);
     UE_LOG(LogTemp, Log, TEXT("Luni의 새 위치: %s"), *NewLocation.ToString());
 }
 
@@ -357,11 +360,15 @@ void ACAlgorithmQuestion::ClearMap()
     }
     CreatedActors.Empty();
 
-    if (Luni)
+    for (AStaticMeshActor* Coin : CreatedCoins)
     {
-        Luni->Destroy();
-        Luni = nullptr;
+        if (Coin)
+        {
+            Coin->Destroy();
+        }
     }
+    CreatedCoins.Empty();
+
 
     UE_LOG(LogTemp, Log, TEXT("맵이 클리어되었습니다."));
 }
