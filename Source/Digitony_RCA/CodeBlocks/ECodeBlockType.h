@@ -13,5 +13,6 @@ enum class ECodeBlockType : uint8
 	Repetition		UMETA(DisplayName = "Repetition"),
 	Number_2			UMETA(DisplayName = "Number2"),
 	Number_3			UMETA(DisplayName = "Number3"),
-	Number_4			UMETA(DisplayName = "Number4")
+	Number_4			UMETA(DisplayName = "Number4"),
+	DownJump			UMETA(DisplayName = "DownJump")
 };

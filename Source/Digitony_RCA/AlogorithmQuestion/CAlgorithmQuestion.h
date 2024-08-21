@@ -29,7 +29,7 @@ public:
     virtual void Tick(float DeltaTime) override;
 
 protected:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
     FDataTableRowHandle MapData;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -43,6 +43,11 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TObjectPtr<UStaticMesh> EndBlock;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TObjectPtr<UStaticMesh> CoinMesh;  // 코인 메쉬
+
+    TArray<AStaticMeshActor*> CreatedCoins;  // 생성된 코인들을 저장할 배열
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float Spacing;
@@ -61,6 +66,10 @@ protected:
 
     UPROPERTY(BlueprintReadOnly)
     FVector StartBlockLocation;
+
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Luni")
+    FRotator InitialLuniRotation;
 
 public:
     UFUNCTION(BlueprintCallable)
@@ -84,6 +93,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void ExecuteCodeBlock();
 
+    UFUNCTION(blueprintcallable)
+    void ProcessRepetitionBlocks(const TArray<ECodeBlockType>& blocks, int32 repeatcount);
+
 private:
     int32 ID;
     int32 Width;
@@ -97,7 +109,5 @@ private:
     int32 CurrentCodeBlockIndex;
 
 private:
-    UPROPERTY(EditAnywhere, Category = "Luni")
-    FRotator InitialLuniRotation;
 
 };

@@ -95,12 +95,26 @@ void ACMagicCircle::EvaluateScore()
 
     if (ActorToSpawn)
     {
-        FVector SpawnLocation = GetActorLocation() + FVector(200, 0, 0); // Set the spawn location relative to the MagicCircle
-        FRotator SpawnRotation = FRotator::ZeroRotator; // Default rotation
-        AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn, SpawnLocation, SpawnRotation);
-        if (SpawnedActor)
+        // 플레이어 컨트롤러를 가져오기
+        APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+        if (PlayerController && PlayerController->GetPawn())
         {
-            UE_LOG(LogTemp, Log, TEXT("Actor spawned successfully"));
+            // 플레이어의 위치와 방향 가져오기
+            FVector PlayerLocation;
+            FRotator PlayerRotation;
+            PlayerController->GetPlayerViewPoint(PlayerLocation, PlayerRotation);
+
+            // 플레이어 앞 일정 거리 떨어진 위치 계산
+            FVector SpawnLocation = PlayerLocation + PlayerRotation.Vector() * 200.0f; // 플레이어의 눈앞 200 유닛 거리
+            FRotator SpawnRotation = PlayerRotation; // 플레이어가 바라보는 방향으로 회전 설정
+
+            // 객체 소환
+            AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn, SpawnLocation, SpawnRotation);
+            if (SpawnedActor)
+            {
+                UE_LOG(LogTemp, Log, TEXT("Actor spawned successfully in front of the player"));
+            }
         }
     }
 }
+
