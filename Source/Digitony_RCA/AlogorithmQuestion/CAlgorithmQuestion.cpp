@@ -133,6 +133,7 @@ void ACAlgorithmQuestion::CreateMap()
                     if (CoinMesh)
                     {
                         NewMesh->GetStaticMeshComponent()->SetStaticMesh(CoinMesh);
+                        NewMesh->GetStaticMeshComponent()->SetWorldScale3D(FVector(0.05f));
                         CreatedCoins.Add(NewMesh);  // 코인을 배열에 추가
                         UE_LOG(LogTemp, Log, TEXT("코인 소환: 위치 = %s"), *NewLocation.ToString());
                     }
