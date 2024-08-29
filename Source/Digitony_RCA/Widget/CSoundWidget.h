@@ -45,4 +45,8 @@ private:
 
     UFUNCTION()
     void OnVolumeSliderChanged(float Value);
+
+public:
+    UFUNCTION(BlueprintCallable)
+    void StopSound();
 };
