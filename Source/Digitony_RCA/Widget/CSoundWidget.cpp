@@ -64,3 +64,12 @@ void UCSoundWidget::OnVolumeSliderChanged(float Value)
         AudioComponent->SetVolumeMultiplier(Value);
     }
 }
+
+void UCSoundWidget::StopSound()
+{
+    if (AudioComponent && AudioComponent->IsPlaying())
+    {
+        AudioComponent->Stop();
+    }
+}
+
