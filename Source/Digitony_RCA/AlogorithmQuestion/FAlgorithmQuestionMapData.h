@@ -23,4 +23,8 @@ struct DIGITONY_RCA_API FAlgorithmQuestionMapData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MapData")
 	FString Map;
+
+	// 기본 생성자
+	FAlgorithmQuestionMapData()
+		: ID(0), Width(0), Height(0), Depth(0) {} // 프로퍼티 초기화
 };

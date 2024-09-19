@@ -3,6 +3,7 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
+
 public class Digitony_RCATarget : TargetRules
 {
 	public Digitony_RCATarget(TargetInfo Target) : base(Target)
@@ -10,6 +11,8 @@ public class Digitony_RCATarget : TargetRules
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V5;
 
-		ExtraModuleNames.AddRange( new string[] { "Digitony_RCA" } );
+        IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
+
+        ExtraModuleNames.AddRange( new string[] { "Digitony_RCA" } );
 	}
 }

@@ -8,6 +8,7 @@
 #include "MagicClicle/CMagicCircle.h"  // Include the MagicCircle header file
 #include "CodeBlocks/ECodeBlockType.h"
 #include "CodeBlocks/CCodeBlockBase.h"
+#include "Engine/StaticMeshActor.h"
 #include "CAlgorithmQuestion.generated.h"
 
 // Forward declarations to reduce dependencies

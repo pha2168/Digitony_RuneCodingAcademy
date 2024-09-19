@@ -2,6 +2,9 @@
 #include "Engine/StaticMeshActor.h"
 #include "Containers/Array.h"
 #include "TimerManager.h"
+#include "Engine/EngineTypes.h"
+#include "Components/PrimitiveComponent.h"
+
 
 // »ý¼ºÀÚ
 ACAlgorithmQuestion::ACAlgorithmQuestion()
