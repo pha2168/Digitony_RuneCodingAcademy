@@ -1,9 +1,9 @@
 #include "AlogorithmQuestion/CAlgorithmQuestion.h"
+#include "Components/PrimitiveComponent.h"
 #include "Engine/StaticMeshActor.h"
 #include "Containers/Array.h"
 #include "TimerManager.h"
 #include "Engine/EngineTypes.h"
-#include "Components/PrimitiveComponent.h"
 
 
 // 생성자
@@ -313,38 +313,45 @@ void ACAlgorithmQuestion::MoveLuni(ECodeBlockType InCodeBlockType)
 
     if (GetWorld()->OverlapMultiByChannel(Overlaps, NewLocation, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(CollisionRadius), CollisionParams))
     {
-        for (auto& Overlap : Overlaps)
+        for (const FOverlapResult& Overlap : Overlaps)
         {
-            AStaticMeshActor* HitActor = Cast<AStaticMeshActor>(Overlap.GetActor());
-
-            if (HitActor)
+            // GetActor() 호출 전 유효성 검사
+            if (AActor* OverlapActor = Overlap.GetActor())
             {
-                UStaticMesh* HitMesh = HitActor->GetStaticMeshComponent()->GetStaticMesh();
+                AStaticMeshActor* HitActor = Cast<AStaticMeshActor>(OverlapActor);
+                if (HitActor)
+                {
+                    UStaticMesh* HitMesh = HitActor->GetStaticMeshComponent()->GetStaticMesh();
 
-                if (HitMesh == CoinMesh)
-                {
-                    UE_LOG(LogTemp, Log, TEXT("루니가 코인을 먹었습니다."));
-                    CreatedCoins.Remove(HitActor);
-                    HitActor->Destroy();
-                }
-
-                if (HitMesh == ObstacleBlock || HitMesh == TransparentObstacleBlock)
-                {
-                    UE_LOG(LogTemp, Warning, TEXT("Luni가 장애물과 충돌했습니다."));
-                    return;
-                }
-                else if (HitMesh == EndBlock)
-                {
-                    if (CreatedCoins.Num() > 0)
+                    if (HitMesh == CoinMesh)
                     {
-                        UE_LOG(LogTemp, Warning, TEXT("모든 코인을 먹기 전까지 맵을 클리어할 수 없습니다."));
-                        return;
+                        UE_LOG(LogTemp, Log, TEXT("루니가 코인을 먹었습니다."));
+                        CreatedCoins.Remove(HitActor);
+                        HitActor->Destroy();
                     }
 
-                    UE_LOG(LogTemp, Log, TEXT("Luni가 EndBlock에 도달했습니다."));
-                    FinishMagic();
-                    return;
+                    if (HitMesh == ObstacleBlock || HitMesh == TransparentObstacleBlock)
+                    {
+                        UE_LOG(LogTemp, Warning, TEXT("Luni가 장애물과 충돌했습니다."));
+                        return;
+                    }
+                    else if (HitMesh == EndBlock)
+                    {
+                        if (CreatedCoins.Num() > 0)
+                        {
+                            UE_LOG(LogTemp, Warning, TEXT("모든 코인을 먹기 전까지 맵을 클리어할 수 없습니다."));
+                            return;
+                        }
+
+                        UE_LOG(LogTemp, Log, TEXT("Luni가 EndBlock에 도달했습니다."));
+                        FinishMagic();
+                        return;
+                    }
                 }
+            }
+            else
+            {
+                UE_LOG(LogTemp, Warning, TEXT("유효하지 않은 OverlapActor입니다."));
             }
         }
     }
